@@ -12,7 +12,7 @@ import android.webkit.WebViewClient;
 /** 깃허브 사이트(우리가 만든 대시보드)를 그대로 띄우는 화면. */
 public class MainActivity extends Activity {
 
-    static final String SITE = "https://cooper0-car.github.io/PitWallF1/";
+    static final String SITE = "https://cooper0-car.github.io/PitwallF1/";
     private static final String SITE_HOST = "cooper0-car.github.io";
 
     private WebView web;
