@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -36,7 +37,7 @@ import java.util.TimeZone;
  */
 public class NextRaceWidget extends AppWidgetProvider {
 
-    private static final String API = "https://api.jolpi.ca/ergast/f1/current.json?limit=100";
+    static final String API = "https://api.jolpi.ca/ergast/f1/current.json?limit=100";
     private static final String PREFS = "pitwall_widget";
     private static final String ACTION_TICK = "com.pitwall.f1.WIDGET_TICK";
     private static final long MIN = 60_000L, HOUR = 60 * MIN, DAY = 24 * HOUR;
@@ -79,11 +80,9 @@ public class NextRaceWidget extends AppWidgetProvider {
         final PendingResult result = goAsync();
         new Thread(() -> {
             try {
-                String json = fetch();
-                if (json != null && !parse(json).isEmpty()) {
-                    app.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("json", json).apply();
-                    render(app, manager, ids, json);
-                }
+                String json = fetch(app);
+                if (!storeIfValid(app, json) && json != null) storeError(app, "응답 형식 오류");
+                render(app, manager, ids, cached(app));
             } catch (Exception ignored) {
             } finally {
                 result.finish();
@@ -123,14 +122,32 @@ public class NextRaceWidget extends AppWidgetProvider {
         return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("json", null);
     }
 
-    private static String fetch() {
+    /** 올바른 일정 데이터면 저장하고 true. 앱 화면(웹뷰)에서 받아온 데이터도 여기로 들어온다. */
+    static boolean storeIfValid(Context ctx, String json) {
+        if (json == null || parse(json).isEmpty()) return false;
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("json", json).putString("err", "").apply();
+        return true;
+    }
+
+    static boolean isSameAsCached(Context ctx, String json) {
+        return json != null && json.equals(cached(ctx));
+    }
+
+    private static void storeError(Context ctx, String err) {
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("err", err).apply();
+    }
+
+    private static String fetch(Context ctx) {
         HttpURLConnection c = null;
         try {
             c = (HttpURLConnection) new URL(API).openConnection();
-            c.setConnectTimeout(7000);
-            c.setReadTimeout(7000);
+            c.setConnectTimeout(8000);
+            c.setReadTimeout(8000);
+            c.setInstanceFollowRedirects(true);
             c.setRequestProperty("Accept", "application/json");
-            if (c.getResponseCode() != 200) return null;
+            c.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android " + Build.VERSION.RELEASE + ") PitwallF1Widget/1.1");
+            int code = c.getResponseCode();
+            if (code != 200) { storeError(ctx, "HTTP " + code); return null; }
             StringBuilder sb = new StringBuilder();
             try (BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
@@ -138,6 +155,7 @@ public class NextRaceWidget extends AppWidgetProvider {
             }
             return sb.toString();
         } catch (Exception e) {
+            storeError(ctx, e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             return null;
         } finally {
             if (c != null) c.disconnect();
@@ -209,12 +227,13 @@ public class NextRaceWidget extends AppWidgetProvider {
         long wake = now + 30 * MIN;
         if (next == null) {
             v.setTextViewText(R.id.kicker, races.isEmpty() ? "PITWALL F1" : "시즌 종료");
+            String err = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("err", "");
             v.setTextViewText(R.id.gp, races.isEmpty() ? "데이터를 불러오는 중" : "다음 시즌을 기다리는 중");
-            v.setTextViewText(R.id.race, "탭해서 앱 열기");
+            v.setTextViewText(R.id.race, races.isEmpty() ? "탭해서 앱을 한 번 열면 채워져요" : "탭해서 앱 열기");
             v.setViewVisibility(R.id.chrono, View.GONE);
             v.setViewVisibility(R.id.days, View.GONE);
             v.setViewVisibility(R.id.cdlabel, View.GONE);
-            v.setTextViewText(R.id.next, "");
+            v.setTextViewText(R.id.next, races.isEmpty() && err != null && !err.isEmpty() ? "위젯 직접 연결 실패 · " + err : "");
         } else {
             boolean weekend = now >= next.sessions.get(0).start;
             v.setTextViewText(R.id.kicker, "ROUND " + next.round + " · " + (weekend ? "이번 주말" : "다음 레이스"));
