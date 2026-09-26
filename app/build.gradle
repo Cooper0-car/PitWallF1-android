@@ -1,0 +1,34 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.pitwall.f1'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.pitwall.f1'
+        minSdk 26
+        targetSdk 34
+        // 깃허브에서 빌드할 때마다 버전 번호가 올라가서 덮어쓰기 설치가 됨
+        versionCode ((System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer)
+        versionName "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+    }
+
+    signingConfigs {
+        // 항상 같은 서명 → 새 버전을 기존 앱 위에 그대로 설치 가능
+        pitwall {
+            storeFile file('../pitwall.keystore')
+            storePassword 'pitwall123'
+            keyAlias 'pitwall'
+            keyPassword 'pitwall123'
+        }
+    }
+    buildTypes {
+        debug { signingConfig signingConfigs.pitwall }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
