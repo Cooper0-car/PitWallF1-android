@@ -63,6 +63,11 @@ public class NextRaceWidget extends AppWidgetProvider {
         for (String[] p : m) GP_KO.put(p[0], p[1]);
     }
 
+    private static final int[][] ROWS = {
+        {R.id.s1, R.id.s1n, R.id.s1t}, {R.id.s2, R.id.s2n, R.id.s2t}, {R.id.s3, R.id.s3n, R.id.s3t},
+        {R.id.s4, R.id.s4n, R.id.s4t}, {R.id.s5, R.id.s5n, R.id.s5t},
+    };
+
     private static final class Session {
         final String name; final long start; final long durMs;
         Session(String name, long start, long durMs) { this.name = name; this.start = start; this.durMs = durMs; }
@@ -233,9 +238,15 @@ public class NextRaceWidget extends AppWidgetProvider {
             v.setViewVisibility(R.id.chrono, View.GONE);
             v.setViewVisibility(R.id.days, View.GONE);
             v.setViewVisibility(R.id.cdlabel, View.GONE);
-            v.setTextViewText(R.id.next, races.isEmpty() && err != null && !err.isEmpty() ? "위젯 직접 연결 실패 · " + err : "");
+            String msg = races.isEmpty() && err != null && !err.isEmpty() ? "연결 실패 · " + err : "";
+            v.setTextViewText(R.id.next, msg);
+            v.setViewVisibility(R.id.next, msg.isEmpty() ? View.GONE : View.VISIBLE);
+            v.setViewVisibility(R.id.list, View.GONE);
+            v.setViewVisibility(R.id.sep, View.GONE);
         } else {
             boolean weekend = now >= next.sessions.get(0).start;
+            v.setViewVisibility(R.id.list, View.VISIBLE);
+            v.setViewVisibility(R.id.sep, View.VISIBLE);
             v.setTextViewText(R.id.kicker, "ROUND " + next.round + " · " + (weekend ? "이번 주말" : "다음 레이스"));
             v.setTextViewText(R.id.gp, GP_KO.containsKey(next.name) ? GP_KO.get(next.name) : next.name);
             v.setTextViewText(R.id.race, "결승 " + when(next.raceStart, now));
@@ -268,14 +279,27 @@ public class NextRaceWidget extends AppWidgetProvider {
                 if (now >= s.start && now < s.start + s.durMs) live = s;
                 if (s.start > now && upcoming == null) upcoming = s;
             }
-            if (live != null) {
-                v.setTextViewText(R.id.next, "지금 · " + live.name + " 진행 중");
-                wake = Math.min(wake, live.start + live.durMs);
-            } else if (upcoming != null) {
-                v.setTextViewText(R.id.next, "다음 세션 · " + upcoming.name + " · " + when(upcoming.start, now));
-                wake = Math.min(wake, upcoming.start);
-            } else {
-                v.setTextViewText(R.id.next, "");
+            if (live != null) wake = Math.min(wake, live.start + live.durMs);
+            else if (upcoming != null) wake = Math.min(wake, upcoming.start);
+            v.setViewVisibility(R.id.next, View.GONE);
+
+            // 오른쪽 세션 일정표: 끝난 세션은 흐리게, 진행 중/다음 세션은 강조
+            SimpleDateFormat fmt = new SimpleDateFormat("E HH:mm", Locale.KOREAN);
+            for (int i = 0; i < ROWS.length; i++) {
+                int[] row = ROWS[i];
+                if (i >= next.sessions.size()) { v.setViewVisibility(row[0], View.GONE); continue; }
+                Session s = next.sessions.get(i);
+                v.setViewVisibility(row[0], View.VISIBLE);
+                int color;
+                String name = s.name;
+                if (s == live) { color = 0xFFFF5A52; name = "● " + s.name; }
+                else if (s == upcoming) { color = 0xFFFFFFFF; name = "▸ " + s.name; }
+                else if (now >= s.start + s.durMs) { color = 0xFF55575E; name = "✓ " + s.name; }
+                else color = 0xFFA0A2A9;
+                v.setTextViewText(row[1], name);
+                v.setTextViewText(row[2], s == live ? "LIVE" : fmt.format(new Date(s.start)));
+                v.setTextColor(row[1], color);
+                v.setTextColor(row[2], color);
             }
         }
 
