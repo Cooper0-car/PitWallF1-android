@@ -241,6 +241,7 @@ public class NextRaceWidget extends AppWidgetProvider {
             String msg = races.isEmpty() && err != null && !err.isEmpty() ? "연결 실패 · " + err : "";
             v.setTextViewText(R.id.next, msg);
             v.setViewVisibility(R.id.next, msg.isEmpty() ? View.GONE : View.VISIBLE);
+            v.setViewVisibility(R.id.nchrono, View.GONE);
             v.setViewVisibility(R.id.list, View.GONE);
             v.setViewVisibility(R.id.sep, View.GONE);
         } else {
@@ -281,10 +282,27 @@ public class NextRaceWidget extends AppWidgetProvider {
             }
             if (live != null) wake = Math.min(wake, live.start + live.durMs);
             else if (upcoming != null) wake = Math.min(wake, upcoming.start);
+            // 다음 세션까지 남은 시간 (결승은 위 큰 카운트다운이 보여주므로 생략)
+            v.setViewVisibility(R.id.nchrono, View.GONE);
             v.setViewVisibility(R.id.next, View.GONE);
+            if (live != null) {
+                v.setTextViewText(R.id.next, "● " + live.name + " 진행 중");
+                v.setViewVisibility(R.id.next, View.VISIBLE);
+            } else if (upcoming != null && upcoming.start != next.raceStart) {
+                long sl = upcoming.start - now;
+                if (sl > DAY) {
+                    v.setTextViewText(R.id.next, upcoming.name + "까지 " + (sl / DAY) + "일 " + ((sl % DAY) / HOUR) + "시간");
+                    v.setViewVisibility(R.id.next, View.VISIBLE);
+                    wake = Math.min(wake, upcoming.start - DAY);
+                } else {
+                    v.setChronometer(R.id.nchrono, SystemClock.elapsedRealtime() + sl, upcoming.name + "까지 %s", true);
+                    v.setChronometerCountDown(R.id.nchrono, true);
+                    v.setViewVisibility(R.id.nchrono, View.VISIBLE);
+                }
+            }
 
             // 오른쪽 세션 일정표: 끝난 세션은 흐리게, 진행 중/다음 세션은 강조
-            SimpleDateFormat fmt = new SimpleDateFormat("E HH:mm", Locale.KOREAN);
+            SimpleDateFormat fmt = new SimpleDateFormat("E a h:mm", Locale.KOREAN);
             for (int i = 0; i < ROWS.length; i++) {
                 int[] row = ROWS[i];
                 if (i >= next.sessions.size()) { v.setViewVisibility(row[0], View.GONE); continue; }
@@ -308,11 +326,11 @@ public class NextRaceWidget extends AppWidgetProvider {
     }
 
     private static String when(long ts, long now) {
-        String hm = new SimpleDateFormat("HH:mm", Locale.KOREAN).format(new Date(ts));
+        String hm = new SimpleDateFormat("a h:mm", Locale.KOREAN).format(new Date(ts));
         long d = dayIndex(ts) - dayIndex(now);
         if (d == 0) return "오늘 " + hm;
         if (d == 1) return "내일 " + hm;
-        return new SimpleDateFormat("M월 d일 (E) HH:mm", Locale.KOREAN).format(new Date(ts));
+        return new SimpleDateFormat("M월 d일 (E) a h:mm", Locale.KOREAN).format(new Date(ts));
     }
 
     private static long dayIndex(long ts) {

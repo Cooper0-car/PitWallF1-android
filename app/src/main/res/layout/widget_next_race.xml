@@ -23,7 +23,7 @@
             android:text="아제르바이잔 그랑프리" android:textColor="@color/text" android:textSize="20sp" android:textStyle="bold" />
 
         <TextView android:id="@+id/race" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp"
-            android:maxLines="1" android:ellipsize="end" android:text="결승 9월 27일 (일) 20:00" android:textColor="@color/text2" android:textSize="12sp" />
+            android:maxLines="1" android:ellipsize="end" android:text="결승 9월 27일 (일) 오후 8:00" android:textColor="@color/text2" android:textSize="12sp" />
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="bottom" android:orientation="vertical">
             <TextView android:id="@+id/cdlabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -32,6 +32,8 @@
                 android:fontFamily="monospace" android:textColor="@color/text" android:textSize="30sp" android:textStyle="bold" android:visibility="gone" />
             <TextView android:id="@+id/days" android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:fontFamily="monospace" android:text="1일 5시간" android:textColor="@color/text" android:textSize="28sp" android:textStyle="bold" />
+            <Chronometer android:id="@+id/nchrono" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:textColor="#FF5A52" android:textSize="11sp" android:visibility="gone" />
             <TextView android:id="@+id/next" android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:maxLines="1" android:ellipsize="end" android:text="" android:textColor="#FF5A52" android:textSize="11sp" android:visibility="gone" />
         </LinearLayout>
@@ -47,23 +49,23 @@
             android:letterSpacing="0.1" android:text="WEEKEND" android:textColor="@color/text3" android:textSize="10sp" android:textStyle="bold" />
             <LinearLayout android:id="@+id/s1" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical" android:orientation="horizontal">
                 <TextView android:id="@+id/s1n" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:maxLines="1" android:ellipsize="end" android:text="세션" android:textColor="@color/text2" android:textSize="12sp" />
-                <TextView android:id="@+id/s1t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 17:30" android:textColor="@color/text2" android:textSize="12sp" />
+                <TextView android:id="@+id/s1t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 오후 5:30" android:textColor="@color/text2" android:textSize="12sp" />
             </LinearLayout>
             <LinearLayout android:id="@+id/s2" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical" android:orientation="horizontal">
                 <TextView android:id="@+id/s2n" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:maxLines="1" android:ellipsize="end" android:text="세션" android:textColor="@color/text2" android:textSize="12sp" />
-                <TextView android:id="@+id/s2t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 17:30" android:textColor="@color/text2" android:textSize="12sp" />
+                <TextView android:id="@+id/s2t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 오후 5:30" android:textColor="@color/text2" android:textSize="12sp" />
             </LinearLayout>
             <LinearLayout android:id="@+id/s3" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical" android:orientation="horizontal">
                 <TextView android:id="@+id/s3n" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:maxLines="1" android:ellipsize="end" android:text="세션" android:textColor="@color/text2" android:textSize="12sp" />
-                <TextView android:id="@+id/s3t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 17:30" android:textColor="@color/text2" android:textSize="12sp" />
+                <TextView android:id="@+id/s3t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 오후 5:30" android:textColor="@color/text2" android:textSize="12sp" />
             </LinearLayout>
             <LinearLayout android:id="@+id/s4" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical" android:orientation="horizontal">
                 <TextView android:id="@+id/s4n" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:maxLines="1" android:ellipsize="end" android:text="세션" android:textColor="@color/text2" android:textSize="12sp" />
-                <TextView android:id="@+id/s4t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 17:30" android:textColor="@color/text2" android:textSize="12sp" />
+                <TextView android:id="@+id/s4t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 오후 5:30" android:textColor="@color/text2" android:textSize="12sp" />
             </LinearLayout>
             <LinearLayout android:id="@+id/s5" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical" android:orientation="horizontal">
                 <TextView android:id="@+id/s5n" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:maxLines="1" android:ellipsize="end" android:text="세션" android:textColor="@color/text2" android:textSize="12sp" />
-                <TextView android:id="@+id/s5t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 17:30" android:textColor="@color/text2" android:textSize="12sp" />
+                <TextView android:id="@+id/s5t" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="금 오후 5:30" android:textColor="@color/text2" android:textSize="12sp" />
             </LinearLayout>
     </LinearLayout>
 </LinearLayout>
