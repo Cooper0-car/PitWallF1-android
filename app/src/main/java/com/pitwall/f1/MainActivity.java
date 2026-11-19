@@ -3,6 +3,9 @@ package com.pitwall.f1;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
@@ -55,6 +58,9 @@ public class MainActivity extends Activity {
         else web.loadUrl(SITE);
 
         NextRaceWidget.refreshAll(this);   // 앱을 열 때마다 위젯도 새로고침
+        SessionAlert.schedule(this);       // 세션 1분 전 알림 예약
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
     }
 
     /** 웹 페이지 → 앱: 받아온 일정 JSON을 위젯용으로 저장. */

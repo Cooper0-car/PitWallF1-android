@@ -42,7 +42,7 @@ public class NextRaceWidget extends AppWidgetProvider {
     private static final String ACTION_TICK = "com.pitwall.f1.WIDGET_TICK";
     private static final long MIN = 60_000L, HOUR = 60 * MIN, DAY = 24 * HOUR;
 
-    private static final Map<String, String> GP_KO = new HashMap<>();
+    static final Map<String, String> GP_KO = new HashMap<>();
     static {
         String[][] m = {
             {"Australian Grand Prix", "호주 그랑프리"}, {"Chinese Grand Prix", "중국 그랑프리"},
@@ -68,12 +68,12 @@ public class NextRaceWidget extends AppWidgetProvider {
         {R.id.s4, R.id.s4n, R.id.s4t}, {R.id.s5, R.id.s5n, R.id.s5t},
     };
 
-    private static final class Session {
+    static final class Session {
         final String name; final long start; final long durMs;
         Session(String name, long start, long durMs) { this.name = name; this.start = start; this.durMs = durMs; }
     }
 
-    private static final class Race {
+    static final class Race {
         int round; String name; long raceStart; final List<Session> sessions = new ArrayList<>();
     }
 
@@ -123,7 +123,7 @@ public class NextRaceWidget extends AppWidgetProvider {
     }
 
     // ------------------------------------------------------------------ data
-    private static String cached(Context ctx) {
+    static String cached(Context ctx) {
         return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("json", null);
     }
 
@@ -131,6 +131,7 @@ public class NextRaceWidget extends AppWidgetProvider {
     static boolean storeIfValid(Context ctx, String json) {
         if (json == null || parse(json).isEmpty()) return false;
         ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("json", json).putString("err", "").apply();
+        SessionAlert.schedule(ctx);
         return true;
     }
 
@@ -167,7 +168,7 @@ public class NextRaceWidget extends AppWidgetProvider {
         }
     }
 
-    private static List<Race> parse(String json) {
+    static List<Race> parse(String json) {
         List<Race> out = new ArrayList<>();
         if (json == null) return out;
         try {

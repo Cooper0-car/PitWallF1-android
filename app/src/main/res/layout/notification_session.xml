@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/notif_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:background="#E10600" android:paddingStart="6dp" android:paddingEnd="6dp" android:paddingTop="1dp" android:paddingBottom="1dp"
+        android:letterSpacing="0.06" android:text="SESSION" android:textColor="#FFFFFF" android:textSize="10sp" android:textStyle="bold" />
+
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:orientation="vertical">
+        <TextView android:id="@+id/n_gp" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:ellipsize="end" android:fontFamily="sans-serif-condensed" android:maxLines="1"
+            android:text="아제르바이잔 그랑프리" android:textColor="@color/text" android:textSize="15sp" android:textStyle="bold" />
+        <TextView android:id="@+id/n_sess" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:ellipsize="end" android:maxLines="1" android:text="예선 시작 1분 전" android:textColor="#FF5A52" android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView android:id="@+id/n_time" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:fontFamily="monospace" android:text="오후 5:30" android:textColor="@color/text2" android:textSize="12sp" />
+</LinearLayout>
