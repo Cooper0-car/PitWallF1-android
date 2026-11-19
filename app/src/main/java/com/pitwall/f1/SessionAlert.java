@@ -56,7 +56,7 @@ public class SessionAlert extends BroadcastReceiver {
         NotificationManager nm = ctx.getSystemService(NotificationManager.class);
         if (nm == null || gp == null || System.currentTimeMillis() > start) return;
 
-        // 소리·진동 없이 화면 위에 잠깐 뜨는(헤드업) 채널
+        // 소리·진동 없이 화면 위에 뜨고(헤드업) 알림 목록에도 남는 채널
         NotificationChannel ch = new NotificationChannel(CHANNEL, "세션 시작 알림", NotificationManager.IMPORTANCE_HIGH);
         ch.setSound(null, null);
         ch.enableVibration(false);
@@ -77,7 +77,7 @@ public class SessionAlert extends BroadcastReceiver {
                 .setCategory(Notification.CATEGORY_EVENT)
                 .setContentIntent(open)
                 .setAutoCancel(true)
-                .setTimeoutAfter(5 * MIN)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)   // 잠금화면에도 표시
                 .build());
     }
 }
