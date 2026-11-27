@@ -36,6 +36,8 @@
                 android:resource="@xml/next_race_widget" />
         </receiver>
 
+        <activity android:name=".SettingsActivity" android:exported="false" />
+
         <receiver
             android:name=".SessionAlert"
             android:exported="false">

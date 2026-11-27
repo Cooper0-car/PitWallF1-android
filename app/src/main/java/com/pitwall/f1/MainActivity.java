@@ -66,6 +66,11 @@ public class MainActivity extends Activity {
     /** 웹 페이지 → 앱: 받아온 일정 JSON을 위젯용으로 저장. */
     private final class WidgetBridge {
         @JavascriptInterface
+        public void openSettings() {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+        }
+
+        @JavascriptInterface
         public void saveSchedule(String json) {
             if (NextRaceWidget.isSameAsCached(getApplicationContext(), json)) return;
             if (NextRaceWidget.storeIfValid(getApplicationContext(), json)) NextRaceWidget.refreshAll(getApplicationContext());
